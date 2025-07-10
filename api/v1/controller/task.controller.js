@@ -1,6 +1,7 @@
 const Task=require("../model/task.model")
 
 const helpPagination=require("../../v1/helper/pagination")
+const searchKeyword=require("../../v1/helper/search")
 const index=async (req,res)=>{
     const find={
         deleted:false
@@ -28,6 +29,18 @@ const index=async (req,res)=>{
       req.query,
       countTasks
     )
+
+
+//end pagination
+
+//start search
+const objectSearch =searchKeyword(req.query);
+if(objectSearch.regex){
+      find.title=objectSearch.regex;
+}
+
+//end search
+
 
        const data = await Task.find(find)
     .sort(sort)

@@ -5,6 +5,10 @@ const objectPagination = (objectPagination , query , countRecords )=>{
     if(query.page){
         objectPagination.currentPage=parseInt(query.page);
        }
+
+       if(query.limit){
+        objectPagination.limitPage=parseInt(query.limit);
+       }
        objectPagination.skip=(objectPagination.currentPage-1)*objectPagination.limitPage;
 
        
