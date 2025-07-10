@@ -151,10 +151,35 @@ const create=async (req,res)=>{
 
 
 }
+
+
+const edit=async (req,res)=>{
+    const id=req.params.id
+    try {
+        const data=req.body
+        await Task.updateOne({
+            _id:id
+        },data)
+
+        res.json({
+            message:"success",
+            status:200
+        })
+        
+
+    } catch (error) {
+        res.json({
+            message:error.message,
+            status:400
+        })
+        
+    }
+}
 module.exports={
     index,
     detail,
     changeStatus, 
     changeMutilStatus,
-    create
+    create,
+    edit
 }
