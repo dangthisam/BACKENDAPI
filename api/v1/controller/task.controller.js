@@ -87,8 +87,45 @@ const changeStatus=async (req,res)=>{
    }
 }
 
+const changeMutilStatus=async (req,res)=>{
+
+    const {ids, key, value}=req.body
+
+    console.log(ids)
+    console.log(key)
+    console.log(value)
+    try {
+        if(ids && key && value){
+            await Task.updateMany(
+                {
+                    _id:{
+                        $in:ids
+                    }
+                },
+                {
+                    [key]:value
+                })
+            }
+
+            res.json({
+                message:"success",
+                status:200
+            })
+        
+    } catch (error) {
+        res.json({
+            message:error.message,
+            status:400
+        })
+        
+    }
+
+
+}
+
 module.exports={
     index,
     detail,
-    changeStatus
+    changeStatus, 
+    changeMutilStatus
 }
