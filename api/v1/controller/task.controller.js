@@ -175,11 +175,65 @@ const edit=async (req,res)=>{
         
     }
 }
+
+const deletetask=async (req,res)=>{
+    const id=req.params.id
+
+    try {
+        await Task.deleteOne({
+            _id:id
+        },{
+            deleted:true,
+            deletedAt:new Date()
+        })
+
+        res.json({
+            message:"success",
+            status:200
+        })
+    } catch (error) {
+        res.json({
+            message:error.message,
+            status:400
+        })
+        
+    }
+}
+
+const deleteManytask=async (req,res)=>{
+    const {ids}=req.body
+    try {
+        await Task.updateMany(
+            {
+                _id:{
+                    $in:ids
+                }
+            },
+            {
+                deleted:true,
+                deletedAt:new Date()
+            })
+
+        res.json({
+            message:"success",
+            status:200
+        })
+    }catch (error) {
+        res.json({
+            message:error.message,
+            status:400
+        })
+        
+    }
+}
+
 module.exports={
     index,
     detail,
     changeStatus, 
     changeMutilStatus,
     create,
-    edit
+    edit,
+    deletetask,
+    deleteManytask
 }
