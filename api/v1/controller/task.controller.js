@@ -1,24 +1,38 @@
 const Task=require("../model/task.model")
 
-
+const helpPagination=require("../../v1/helper/pagination")
 const index=async (req,res)=>{
     const find={
         deleted:false
     }
-    console.log(req.query)
+
 
    if(req.query.status){
     find.status=req.query.status
    }
-
+  //start sort
    const sort={}
    if(req.query.sortKey && req.query.sortValue){
     sort[req.query.sortKey]=req.query.sortValue
    }
+//end sort
 
-    const   data = await Task.find(find).sort(
-        sort
+//start pagination
+
+     const countTasks = await Task.countDocuments(find);
+    let objectPagination = helpPagination(
+      {
+        currentPage:1,
+        limitPage:2
+      },
+      req.query,
+      countTasks
     )
+
+       const data = await Task.find(find)
+    .sort(sort)
+    .limit(objectPagination.limitPage)
+    .skip(objectPagination.skip);
      
         res.json(data)
     
