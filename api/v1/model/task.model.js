@@ -3,7 +3,11 @@ const mongoose = require('mongoose');
 const taskSchema = new mongoose.Schema(
     {
        title:String,
-       status:String,
+       status:{
+        type:String,
+        enum:["pending initial doing inconclusive finished"],
+        default:"pending"
+       },
        content:String,
        timeStart:Date,
        timeFinish:Date,

@@ -57,13 +57,38 @@ const detail=async (req,res)=>{
 const   data = await Task.find({
         _id:id,
         deleted:false
-    }).select("title")
+    })
 
 
     res.json(data)
 }
 
+const changeStatus=async (req,res)=>{
+
+   try {
+     const id=req.params.id
+    
+  await Task.updateOne({
+    _id:id
+  },{
+    status:req.body.status
+  })
+    res.json({
+        message:"success",
+        status:200,
+    
+    })
+    
+   } catch (error) {
+    res.json({
+        message:error.message,
+        status:400
+    })
+   }
+}
+
 module.exports={
     index,
-    detail
+    detail,
+    changeStatus
 }
