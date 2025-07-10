@@ -123,9 +123,38 @@ const changeMutilStatus=async (req,res)=>{
 
 }
 
+
+const create=async (req,res)=>{
+    console.log(req.body)
+
+    try {
+     
+            const data= new Task(req.body)
+            await data.save()
+                
+        
+        
+
+        res.json({
+            message:"success",
+            status:200,
+            data:data
+        })
+        
+    } catch (error) {
+        res.json({
+            message:error.message,
+            status:400
+        })
+        
+    }
+
+
+}
 module.exports={
     index,
     detail,
     changeStatus, 
-    changeMutilStatus
+    changeMutilStatus,
+    create
 }
