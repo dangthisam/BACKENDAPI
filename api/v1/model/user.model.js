@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const { generateRandomString } =require("../../v1/model/generate")
+const { generateRandomString } =require("../helper/generate")
 
 const userSchema = new mongoose.Schema(
     {
