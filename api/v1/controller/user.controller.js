@@ -180,11 +180,30 @@ await User.updateOne({
 
 
 }
+
+const detailUser=async (req,res)=>{
+    const tokenUser=req.cookies.tokenUser
+
+   const user=await User.findOne({
+    tokenUser:tokenUser,
+    deleted:false
+
+}).select("-password -tokenUser -__v -createdAt -updatedAt -deletedAt -deleted")
+
+
+res.json({
+    message:"success",
+    status:200,
+    data:user
+})
+
+}
 module.exports={
     userRegister,
     login,
     forgotPassword,
     otp,
-    resetPassword
+    resetPassword,
+    detailUser
 
 }
