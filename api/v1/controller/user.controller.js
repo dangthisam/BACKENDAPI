@@ -36,6 +36,37 @@ const userRegister=async (req,res)=>{
 
 }
 
+const login = async (req, res) => {
+  const { email, password } = req.body;
+    const existEmail= await User.findOne({
+    email: email,
+    deleted: false,
+  })
+
+ if(!existEmail){
+    res.json({
+        message:"email không tồn tại",
+        status:400
+    })
+ }
+
+ if(md5(password) !== existEmail.password){
+    res.json({
+        message:"password không đúng",
+        status:400
+    })
+ }
+
+    const tokenUser = existEmail.tokenUser;
+
+  res.cookie("tokenUser", tokenUser);
+    res.json({
+        message:"login success",
+        status:200,
+        tokenUser:tokenUser
+    }   )
+}
 module.exports={
-    userRegister
+    userRegister,
+    login
 }
