@@ -90,11 +90,11 @@ if(!existEmail){
 //save data auth in db
 const otp=helpGenerateRandomNumber.generateRandomNumber(8)
 
-const timeExpire=5;
+
 const objectAuth={
     email:email,
     otp:otp,
-    expireAt:Date.now() +timeExpire*5
+    expireAt:Date.now() 
      
 }
 
@@ -116,8 +116,44 @@ helpSendMail.sendEmail(email,subject,html)
     })
 
 }
+
+const otp=async (req,res)=>{
+    const {email,otp}=req.body
+
+
+    const exitsOtp=await ForgotPassword.findOne({
+        email:email,
+        otp:otp
+    })
+
+    if(!exitsOtp){
+        res.json({
+            message:"otp không đúng",
+            status:400
+        })
+    }
+
+    const user=await User.findOne({
+        email:email,
+        deleted:false
+    })
+
+    
+    res.cookie("tokenUser",user.tokenUser)
+
+
+    res.json({
+        message:"auth otp success",
+        status:200,
+        tokenUser:user.tokenUser
+    })
+
+    
+
+}
 module.exports={
     userRegister,
     login,
-    forgotPassword
+    forgotPassword,
+    otp
 }
