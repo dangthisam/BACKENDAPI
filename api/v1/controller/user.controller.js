@@ -151,9 +151,40 @@ const otp=async (req,res)=>{
     
 
 }
+
+const resetPassword=async (req,res)=>{
+const tokenUser=req.cookies.tokenUser
+const {password}=req.body
+
+const user=await User.findOne({
+    tokenUser:tokenUser
+})
+if(md5(password) === user.password){
+    res.json({
+        message:"mật khẩu mới không được trùng với mật khẩu cũ",
+        status:400
+    })
+    return;
+}
+
+await User.updateOne({
+    tokenUser:tokenUser
+},{
+    password:md5(password)
+})
+
+    res.json({
+        message:"reset password success",
+        status:200
+    })
+
+
+}
 module.exports={
     userRegister,
     login,
     forgotPassword,
-    otp
+    otp,
+    resetPassword
+
 }
