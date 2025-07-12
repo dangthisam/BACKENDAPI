@@ -128,7 +128,7 @@ const changeMutilStatus=async (req,res)=>{
 
 const create=async (req,res)=>{
 
-    req.body.createdBy=req.user.id
+    req.body.createdBy=req.user
 
     try {
      
