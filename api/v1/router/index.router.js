@@ -5,8 +5,8 @@ require("dotenv").config();
 
 const taskRouter=require("../router/task.router")
 const userRouter=require("../router/user.router")
-
-router.use("/api/v1/task",taskRouter)
+const middlewareUser=require("../middleware/user.authozition")
+router.use("/api/v1/task", middlewareUser.authUser , taskRouter)
 
 router.use("/api/v1/user" , userRouter)
 

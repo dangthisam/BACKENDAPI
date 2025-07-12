@@ -4,7 +4,7 @@ var cors = require('cors')
 require("dotenv").config();
 const cookieParser = require('cookie-parser')
 const path = require("path");
-const database=require("./config/connectdb")
+const database=require("../BackEndAPI/api/v1/config/connectdb")
 database.connect()
 const app=express()
 

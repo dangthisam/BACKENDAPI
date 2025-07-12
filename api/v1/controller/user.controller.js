@@ -3,14 +3,13 @@ const User=require("../model/user.model")
 
 const ForgotPassword=require("../model/passwordReset")
 const helpGenerateRandomNumber=require("../helper/generate")
-
+const middlewareUser=require("../middleware/user.authozition")
 const helpSendMail=require("../helper/sendMail")
 
 const md5=require("md5")
 
 
 const userRegister=async (req,res)=>{
-
 
     req.body.password=md5(req.body.password)
     const existEmail=await User.findOne({
@@ -19,23 +18,28 @@ const userRegister=async (req,res)=>{
     
     })
 
-
     if(existEmail){
     res.json({
         message:"email đã tồn tại",
         status:400
     })
     }else{
-        const data= new User(req.body)
+
+        const tokenUser=helpGenerateRandomNumber.generateRandomString(32)
+        const data= new User({
+            ...req.body,
+            tokenUser:tokenUser
+        })
+        
         await data.save()
 
-        const tokenUser=data.tokenUser
+        const tokenUsesr=data.tokenUser
 
         res.cookie("tokenUser",tokenUser)
         res.json({
             message:"create account success",
             status:200,
-            tokenUser:tokenUser
+            tokenUsers:tokenUser
         })
     }
 
@@ -75,7 +79,6 @@ const login = async (req, res) => {
 const forgotPassword=async (req,res)=>{
     const email=req.body.email
  
-
     const existEmail=await User.findOne({
         email:email,
         deleted:false
@@ -108,14 +111,14 @@ const html=`Mã OTP để khôi phục mật khẩu là <b>${otp}</b>`
 
 helpSendMail.sendEmail(email,subject,html)
 //end sent otp to email
-
-
     res.json({
         message:"sent otp to email success",
         status:200
     })
 
 }
+
+
 
 const otp=async (req,res)=>{
     const {email,otp}=req.body
@@ -182,20 +185,29 @@ await User.updateOne({
 }
 
 const detailUser=async (req,res)=>{
-    const tokenUser=req.cookies.tokenUser
-
-   const user=await User.findOne({
-    tokenUser:tokenUser,
-    deleted:false
-
-}).select("-password -tokenUser -__v -createdAt -updatedAt -deletedAt -deleted")
 
 
 res.json({
     message:"success",
     status:200,
-    data:user
+    data:req.user
 })
+
+}
+
+const allUserinTask=async (req,res)=>{
+
+    const users=await User.find({
+        deleted:false
+    }).select("fullName email");
+
+    res.json({
+        message:"success",
+        status:200,
+        data:users
+    })
+
+
 
 }
 module.exports={
@@ -204,6 +216,7 @@ module.exports={
     forgotPassword,
     otp,
     resetPassword,
-    detailUser
+    detailUser,
+    allUserinTask
 
 }
