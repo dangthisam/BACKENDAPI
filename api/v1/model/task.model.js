@@ -9,6 +9,8 @@ const taskSchema = new mongoose.Schema(
 
         default:"pending"
        },
+
+       parentId:String,
        listUser:Array,
        createdBy:String,
        content:String,

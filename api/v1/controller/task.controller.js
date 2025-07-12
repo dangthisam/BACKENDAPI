@@ -4,6 +4,10 @@ const helpPagination=require("../../v1/helper/pagination")
 const searchKeyword=require("../../v1/helper/search")
 const index=async (req,res)=>{
     const find={
+        $or: [
+            {createdBy:req.user.id},
+            {listUser:req.user.id}
+        ],
         deleted:false
     }
 
@@ -91,9 +95,7 @@ const changeMutilStatus=async (req,res)=>{
 
     const {ids, key, value}=req.body
 
-    console.log(ids)
-    console.log(key)
-    console.log(value)
+    
     try {
         if(ids && key && value){
             await Task.updateMany(
@@ -125,7 +127,7 @@ const changeMutilStatus=async (req,res)=>{
 
 
 const create=async (req,res)=>{
-    console.log(req.body)
+
     req.body.createdBy=req.user.id
 
     try {
