@@ -45,35 +45,74 @@ const userRegister=async (req,res)=>{
 
 }
 
+const user=[
+    {
+        email:"samnvhn@gmail.com",
+        password:"123456"
+    },
+    {
+        email:"dangthuy@gmail.com",
+        password:"abcdef"
+    }
+]
 const login = async (req, res) => {
-  const { email, password } = req.body;
-    const existEmail= await User.findOne({
-    email: email,
-    deleted: false,
-  })
 
- if(!existEmail){
-    res.json({
-        message:"email không tồn tại",
-        status:400
-    })
- }
+    const { email, password } = req.body;
 
- if(md5(password) !== existEmail.password){
-    res.json({
-        message:"password không đúng",
-        status:400
-    })
- }
+    if(!email || !password){
+        res.json({
+            message:"vui lòng nhập đầy đủ thông tin",  
+            status:400
+        })
+        return;
+    }
+    
+    if(email !== user[0].email || password !== user[0].password){
+        res.json({
+            message:"email hoặc password không đúng",
+            status:400
+        })
+        return;
+    }
+    if(email === user[0].email && password === user[0].password){
+        res.json({
+            message:"login success",
+            status:200
+        })
+        return;
+    }
+//   const { email, password } = req.body;
+//     const existEmail= await User.findOne({
+//     email: email,
+//     deleted: false,
+//   })
 
-    const tokenUser = existEmail.tokenUser;
+//  if(!existEmail){
+//     res.json({
+//         message:"email không tồn tại",
+//         status:400
+//     })
+//  }
 
-  res.cookie("tokenUser", tokenUser);
-    res.json({
-        message:"login success",
-        status:200,
-        tokenUser:tokenUser
-    }   )
+//  if(md5(password) !== existEmail.password){
+//     res.json({
+//         message:"password không đúng",
+//         status:400
+//     })
+//  }
+
+//     const tokenUser = existEmail.tokenUser;
+
+//   res.cookie("tokenUser", tokenUser);
+//     res.json({
+//         message:"login success",
+//         status:200,
+//         tokenUser:tokenUser
+//     }   )
+res.json({
+    message:"login success",
+    status:200
+})
 }
 
 const forgotPassword=async (req,res)=>{
@@ -210,6 +249,55 @@ const allUserinTask=async (req,res)=>{
 
 
 }
+
+const BlogPost =[
+    {
+        slug: "first-blog-post",
+title: "First Blog Post",
+description: "Lorem ipsum dolor sit amet, consectet",
+content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    },
+    {
+        slug: "second-blog-post",
+title: "Second Blog Post",
+description: "Ut enim ad minim veniam, quis nostrud exercitation",
+content: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+    }
+
+]
+
+const addnewpost =async (req,res)=>{
+    const post={
+        slug: req.body.slug,
+        title: req.body.title,
+        description: req.body.description,
+    }
+    BlogPost.push(post);
+    res.json({
+        message:"add new post success",
+        status:200,
+        data:post
+    })
+    console.log(BlogPost);
+}
+
+
+const addnewUser=async (req,res)=>{
+    const user={
+        email:req.body.email,
+        password:req.body.password
+    }
+    // user.push(user);
+     res.json({
+        message:"add new user success",
+        status:200,
+        data:user
+    })
+    console.log(user);
+    }
+   
+
+
 module.exports={
     userRegister,
     login,
@@ -217,6 +305,7 @@ module.exports={
     otp,
     resetPassword,
     detailUser,
-    allUserinTask
-
+    allUserinTask,
+    addnewpost,
+    addnewUser
 }
