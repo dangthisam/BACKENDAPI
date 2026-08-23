@@ -10,34 +10,39 @@ pipeline {
     stages {
         stage('1. Checkout Code') {
             steps {
-                // Jenkins tự động checkout branch từ repository bạn cấu hình
-                echo 'Pulling code from Git repository...'
+                echo 'Pulling latest code from Git...'
             }
         }
 
         stage('2. Build Docker Image') {
             steps {
-                echo 'Building Docker image...'
-                sh "docker build -t ${DOCKER_IMAGE} ."
+                echo 'Building Docker image without cache...'
+                // Thêm cờ --no-cache để bắt buộc copy code mới nhất
+                sh "docker build --no-cache -t ${DOCKER_IMAGE} ."
             }
         }
 
         stage('3. Push to Docker Hub') {
             steps {
-                echo 'Logging in and pushing image to Docker Hub...'
+                echo 'Logging in and pushing to Docker Hub...'
                 withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh "echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin"
-                    sh "docker push ${DOCKER_IMAGE}"
+                    sh '''
+                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                        docker push ${DOCKER_IMAGE}
+                    '''
                 }
             }
         }
 
         stage('4. Deploy on Server') {
             steps {
-                echo 'Updating service on Ubuntu server...'
+                echo 'Deploying and recreating container...'
                 dir("${DEPLOY_PATH}") {
-                    sh "docker compose pull node-api"
-                    sh "docker compose up -d"
+                    // Ép pull bản mới và bắt buộc hủy container cũ tạo container mới
+                    sh '''
+                        docker compose pull node-api
+                        docker compose up -d --force-recreate --no-deps node-api
+                    '''
                 }
             }
         }
@@ -48,7 +53,7 @@ pipeline {
             echo 'Deployment completed successfully!'
         }
         failure {
-            echo 'Pipeline failed. Please check build logs.'
+            echo 'Pipeline failed. Please check logs.'
         }
     }
 }
