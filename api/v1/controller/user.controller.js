@@ -47,7 +47,7 @@ const userRegister=async (req,res)=>{
 
 const user = [
     {
-        email: "samnvhn@gmail.com",
+        email: "samnvhn1@gmail.com",
         password: "123456"
     },
     {
