@@ -45,75 +45,45 @@ const userRegister=async (req,res)=>{
 
 }
 
-const user=[
+const user = [
     {
-        email:"samnvhn1@gmail.com",
-        password:"123456"
+        email: "samnvhn1@gmail.com",
+        password: "123456"
     },
     {
-        email:"dangthuy@gmail.com",
-        password:"abcdef"
+        email: "dangthuy@gmail.com",
+        password: "abcdef"
     }
-]
-const login = async (req, res) => {
+];
 
+const login = async (req, res) => {
     const { email, password } = req.body;
 
-    if(!email || !password){
-        res.json({
-            message:"vui lòng nhập đầy đủ thông tin",  
-            status:400
-        })
-        return;
+    // 1. Kiểm tra thiếu dữ liệu
+    if (!email || !password) {
+        return res.status(400).json({
+            message: "Vui lòng nhập đầy đủ thông tin",
+            status: 400
+        });
     }
     
-    if(email !== user[0].email || password !== user[0].password){
-        res.json({
-            message:"email hoặc password không đúng",
-            status:400
-        })
-        return;
+    // 2. Tìm kiếm user khớp cả email và password
+    const existUser = user.find(u => u.email === email && u.password === password);
+
+    // 3. Nếu không khớp
+    if (!existUser) {
+        return res.status(400).json({
+            message: "Email hoặc password không đúng",
+            status: 400
+        });
     }
-    if(email === user[0].email && password === user[0].password){
-        res.json({
-            message:"login success",
-            status:200
-        })
-        return;
-    }
-//   const { email, password } = req.body;
-//     const existEmail= await User.findOne({
-//     email: email,
-//     deleted: false,
-//   })
 
-//  if(!existEmail){
-//     res.json({
-//         message:"email không tồn tại",
-//         status:400
-//     })
-//  }
-
-//  if(md5(password) !== existEmail.password){
-//     res.json({
-//         message:"password không đúng",
-//         status:400
-//     })
-//  }
-
-//     const tokenUser = existEmail.tokenUser;
-
-//   res.cookie("tokenUser", tokenUser);
-//     res.json({
-//         message:"login success",
-//         status:200,
-//         tokenUser:tokenUser
-//     }   )
-res.json({
-    message:"login success",
-    status:200
-})
-}
+    // 4. Nếu khớp thành công
+    return res.status(200).json({
+        message: "Login success",
+        status: 200
+    });
+};
 
 const forgotPassword=async (req,res)=>{
     const email=req.body.email
