@@ -4,7 +4,7 @@ var cors = require('cors')
 
 const cookieParser = require('cookie-parser')
 const path = require("path");
-const database=require("../BackEndAPI/api/v1/config/connectdb")
+const database = require('./api/v1/config/connectdb');
 database.connect()
 const app=express()
 
